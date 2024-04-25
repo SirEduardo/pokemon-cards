@@ -21,10 +21,10 @@ export function Types({ isOpen, onClose, pokemonData }) {
     }
   }
 
-  async function pokemonClass(Class) {
+  async function pokemonClass(classType) {
     try {
       const response = await fetch(
-        ` https://pokeapi.co/api/v2/pokemon/${Class}/`
+        ` https://pokeapi.co/api/v2/pokemon/${classType}/`
       );
       if (!response.ok) {
         throw new Error("failed fetching data");
@@ -37,31 +37,39 @@ export function Types({ isOpen, onClose, pokemonData }) {
       return null;
     }
   }
+  async function getweaknesses() {
+    const type = await pokemonClass(pokemonData);
+    const weakness = await weakAgainst(type);
+    setWeaknesses(weakness);
+  }
 
   useEffect(() => {
-    async function getweaknesses() {
-      const type = await pokemonClass(pokemonData);
-      const weakness = await weakAgainst(type);
-      setWeaknesses(weakness);
-    }
     getweaknesses();
-  }, [pokemonData]);
+  });
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex flex-col gap-2 bg-white z-50">
-      <button className="flex justify-end p-2" onClick={onClose}>
-        X
-      </button>
-      
+    <div className="fixed inset-0 flex flex-col gap-2 bg-orange-400 z-50">
+      <div className="flex justify-end p-10">
+        <button className="bg-red-600 px-3 py-3 rounded-lg" onClick={onClose}>
+          Close
+        </button>
+      </div>
 
-      <div className="p-8">
-        <span>Debilidades:</span>
+      <div className="flex gap-32">
+        <div className="p-8">
+          <span className="text-2xl">Weaknesses:</span>
+          <div>
+            {weaknesses.map((weakness, index) => (
+              <span className="flex" key={index}>
+                {weakness.name}
+              </span>
+            ))}
+          </div>
+        </div>
         <div>
-          {weaknesses.map((weakness, index) => (
-            <span key={index}>{weakness.name}</span>
-          ))}
+          <div></div>
         </div>
       </div>
     </div>
